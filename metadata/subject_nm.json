@@ -1,0 +1,40 @@
+{
+  "id": "nm",
+  "name": "NM",
+  "years": [
+    "2025",
+    "2024",
+    "2023",
+    "2022"
+  ],
+  "papers": [
+    {
+      "year": "2025",
+      "type": "paper",
+      "rel_path": "GATE_2027-2025_Question_Papers/QPs GATE 2007 to 2025/NM/NM/NM2025.pdf",
+      "size": 922687,
+      "mime": "application/pdf"
+    },
+    {
+      "year": "2024",
+      "type": "paper",
+      "rel_path": "GATE_2027-2025_Question_Papers/QPs GATE 2007 to 2025/NM/NM/NM2024.pdf",
+      "size": 1050786,
+      "mime": "application/pdf"
+    },
+    {
+      "year": "2023",
+      "type": "paper",
+      "rel_path": "GATE_2027-2025_Question_Papers/QPs GATE 2007 to 2025/NM/NM/NM2023.pdf",
+      "size": 664351,
+      "mime": "application/pdf"
+    },
+    {
+      "year": "2022",
+      "type": "paper",
+      "rel_path": "GATE_2027-2025_Question_Papers/QPs GATE 2007 to 2025/NM/NM/NM2022.pdf",
+      "size": 514018,
+      "mime": "application/pdf"
+    }
+  ]
+}

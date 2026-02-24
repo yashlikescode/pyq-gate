@@ -1,0 +1,203 @@
+{
+  "id": "gg",
+  "name": "GG",
+  "years": [
+    "2025",
+    "2024",
+    "2023",
+    "2022",
+    "2021",
+    "2020",
+    "2019",
+    "2018",
+    "2017",
+    "2016",
+    "2015",
+    "2014",
+    "2013",
+    "2012",
+    "2011",
+    "2010",
+    "2009",
+    "2008",
+    "2007"
+  ],
+  "papers": [
+    {
+      "year": "2025",
+      "type": "paper",
+      "rel_path": "GATE_2027-2025_Question_Papers/QPs GATE 2007 to 2025/GG/GG/GG-1_2025.pdf",
+      "size": 990278,
+      "mime": "application/pdf"
+    },
+    {
+      "year": "2025",
+      "type": "paper",
+      "rel_path": "GATE_2027-2025_Question_Papers/QPs GATE 2007 to 2025/GG/GG/GG-2_2025.pdf",
+      "size": 997159,
+      "mime": "application/pdf"
+    },
+    {
+      "year": "2024",
+      "type": "paper",
+      "rel_path": "GATE_2027-2025_Question_Papers/QPs GATE 2007 to 2025/GG/GG/GG1-2024.pdf",
+      "size": 926658,
+      "mime": "application/pdf",
+      "part": 1
+    },
+    {
+      "year": "2024",
+      "type": "paper",
+      "rel_path": "GATE_2027-2025_Question_Papers/QPs GATE 2007 to 2025/GG/GG/GG2-2024.pdf",
+      "size": 829846,
+      "mime": "application/pdf",
+      "part": 2
+    },
+    {
+      "year": "2023",
+      "type": "paper",
+      "rel_path": "GATE_2027-2025_Question_Papers/QPs GATE 2007 to 2025/GG/GG/GG1-2023.pdf",
+      "size": 586827,
+      "mime": "application/pdf",
+      "part": 1
+    },
+    {
+      "year": "2023",
+      "type": "paper",
+      "rel_path": "GATE_2027-2025_Question_Papers/QPs GATE 2007 to 2025/GG/GG/GG2-2023.pdf",
+      "size": 675124,
+      "mime": "application/pdf",
+      "part": 2
+    },
+    {
+      "year": "2022",
+      "type": "paper",
+      "rel_path": "GATE_2027-2025_Question_Papers/QPs GATE 2007 to 2025/GG/GG/GG1-2022.pdf",
+      "size": 528041,
+      "mime": "application/pdf",
+      "part": 1
+    },
+    {
+      "year": "2022",
+      "type": "paper",
+      "rel_path": "GATE_2027-2025_Question_Papers/QPs GATE 2007 to 2025/GG/GG/GG2-2022.pdf",
+      "size": 514090,
+      "mime": "application/pdf",
+      "part": 2
+    },
+    {
+      "year": "2021",
+      "type": "paper",
+      "rel_path": "GATE_2027-2025_Question_Papers/QPs GATE 2007 to 2025/GG/GG/GG1-2021.pdf",
+      "size": 6308110,
+      "mime": "application/pdf",
+      "part": 1
+    },
+    {
+      "year": "2021",
+      "type": "paper",
+      "rel_path": "GATE_2027-2025_Question_Papers/QPs GATE 2007 to 2025/GG/GG/GG2-2021.pdf",
+      "size": 5120251,
+      "mime": "application/pdf",
+      "part": 2
+    },
+    {
+      "year": "2020",
+      "type": "paper",
+      "rel_path": "GATE_2027-2025_Question_Papers/QPs GATE 2007 to 2025/GG/GG/GG2020.pdf",
+      "size": 2534577,
+      "mime": "application/pdf"
+    },
+    {
+      "year": "2019",
+      "type": "paper",
+      "rel_path": "GATE_2027-2025_Question_Papers/QPs GATE 2007 to 2025/GG/GG/GG2019.pdf",
+      "size": 4285260,
+      "mime": "application/pdf"
+    },
+    {
+      "year": "2018",
+      "type": "paper",
+      "rel_path": "GATE_2027-2025_Question_Papers/QPs GATE 2007 to 2025/GG/GG/GG2018.pdf",
+      "size": 453936,
+      "mime": "application/pdf"
+    },
+    {
+      "year": "2017",
+      "type": "paper",
+      "rel_path": "GATE_2027-2025_Question_Papers/QPs GATE 2007 to 2025/GG/GG/GG2017.pdf",
+      "size": 4488831,
+      "mime": "application/pdf"
+    },
+    {
+      "year": "2016",
+      "type": "paper",
+      "rel_path": "GATE_2027-2025_Question_Papers/QPs GATE 2007 to 2025/GG/GG/GG2016.pdf",
+      "size": 471032,
+      "mime": "application/pdf"
+    },
+    {
+      "year": "2015",
+      "type": "paper",
+      "rel_path": "GATE_2027-2025_Question_Papers/QPs GATE 2007 to 2025/GG/GG/GG2015.pdf",
+      "size": 3214725,
+      "mime": "application/pdf"
+    },
+    {
+      "year": "2014",
+      "type": "paper",
+      "rel_path": "GATE_2027-2025_Question_Papers/QPs GATE 2007 to 2025/GG/GG/GG2014.pdf",
+      "size": 1468924,
+      "mime": "application/pdf"
+    },
+    {
+      "year": "2013",
+      "type": "paper",
+      "rel_path": "GATE_2027-2025_Question_Papers/QPs GATE 2007 to 2025/GG/GG/GG2013.pdf",
+      "size": 413690,
+      "mime": "application/pdf"
+    },
+    {
+      "year": "2012",
+      "type": "paper",
+      "rel_path": "GATE_2027-2025_Question_Papers/QPs GATE 2007 to 2025/GG/GG/GG2012.pdf",
+      "size": 364167,
+      "mime": "application/pdf"
+    },
+    {
+      "year": "2011",
+      "type": "paper",
+      "rel_path": "GATE_2027-2025_Question_Papers/QPs GATE 2007 to 2025/GG/GG/GG2011.pdf",
+      "size": 312238,
+      "mime": "application/pdf"
+    },
+    {
+      "year": "2010",
+      "type": "paper",
+      "rel_path": "GATE_2027-2025_Question_Papers/QPs GATE 2007 to 2025/GG/GG/GG2010.pdf",
+      "size": 213253,
+      "mime": "application/pdf"
+    },
+    {
+      "year": "2009",
+      "type": "paper",
+      "rel_path": "GATE_2027-2025_Question_Papers/QPs GATE 2007 to 2025/GG/GG/GG2009.pdf",
+      "size": 3021139,
+      "mime": "application/pdf"
+    },
+    {
+      "year": "2008",
+      "type": "paper",
+      "rel_path": "GATE_2027-2025_Question_Papers/QPs GATE 2007 to 2025/GG/GG/GG2008.pdf",
+      "size": 2002389,
+      "mime": "application/pdf"
+    },
+    {
+      "year": "2007",
+      "type": "paper",
+      "rel_path": "GATE_2027-2025_Question_Papers/QPs GATE 2007 to 2025/GG/GG/GG2007.pdf",
+      "size": 2206226,
+      "mime": "application/pdf"
+    }
+  ]
+}

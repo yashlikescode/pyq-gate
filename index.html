@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#1a237e" />
+    <meta
+      name="description"
+      content="GATE Previous Year Question Papers — 2007 to 2025, all subjects."
+    />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="apple-mobile-web-app-title" content="GATE PYQ" />
+
+    <title>GATE PYQ</title>
+    <link rel="manifest" href="manifest.json" />
+    <link rel="apple-touch-icon" href="icons/icon-192.png" />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="192x192"
+      href="icons/icon-192.png"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <!-- ── App Shell ── -->
+    <header id="appHeader">
+      <button id="btnBack" class="btn-icon hidden" aria-label="Back">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <polyline points="15 18 9 12 15 6" />
+        </svg>
+      </button>
+      <div id="headerTitle">
+        <span id="appTitle">GATE PYQ</span>
+        <span id="headerSub" class="hidden"></span>
+      </div>
+      <div class="header-spacer"></div>
+    </header>
+
+    <main id="appMain">
+      <!-- ── Home View ── -->
+      <section id="viewHome" class="view active">
+        <div class="hero">
+          <h1>GATE Question Papers</h1>
+          <p>2007 – 2025 &nbsp;·&nbsp; 35 subjects &nbsp;·&nbsp; 495 papers</p>
+        </div>
+
+        <div class="search-bar">
+          <svg
+            class="search-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+          >
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <input
+            id="subjectSearch"
+            type="search"
+            placeholder="Search subject…"
+            autocomplete="off"
+            spellcheck="false"
+          />
+        </div>
+
+        <div id="subjectGrid" class="subject-grid">
+          <div class="skeleton-card"></div>
+          <div class="skeleton-card"></div>
+          <div class="skeleton-card"></div>
+          <div class="skeleton-card"></div>
+          <div class="skeleton-card"></div>
+          <div class="skeleton-card"></div>
+        </div>
+      </section>
+
+      <!-- ── Subject / Year View ── -->
+      <section id="viewSubject" class="view">
+        <div id="yearList" class="year-list"></div>
+      </section>
+
+      <!-- ── Paper List View (papers for a given year) ── -->
+      <section id="viewPapers" class="view">
+        <div id="paperList" class="paper-list"></div>
+      </section>
+
+      <!-- ── PDF Viewer ── -->
+      <section id="viewPdf" class="view viewer-view">
+        <div id="pdfToolbar" class="pdf-toolbar">
+          <span id="pdfTitle" class="pdf-title"></span>
+          <a
+            id="pdfOpenNew"
+            href="#"
+            target="_blank"
+            rel="noopener"
+            class="btn btn-sm"
+            aria-label="Open in new tab"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" />
+              <polyline points="15 3 21 3 21 9" />
+              <line x1="10" y1="14" x2="21" y2="3" />
+            </svg>
+            Open
+          </a>
+          <button id="pdfDownload" class="btn btn-sm" aria-label="Download">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+              <polyline points="7 10 12 15 17 10" />
+              <line x1="12" y1="15" x2="12" y2="3" />
+            </svg>
+            Save
+          </button>
+        </div>
+        <div id="pdfContainer" class="pdf-container">
+          <div id="pdfLoading" class="pdf-loading">
+            <div class="spinner"></div>
+            <span>Loading paper…</span>
+          </div>
+          <iframe
+            id="pdfFrame"
+            title="Paper viewer"
+            allow="fullscreen"
+            loading="lazy"
+          ></iframe>
+        </div>
+      </section>
+    </main>
+
+    <!-- ── Bottom install hint (shown once) ── -->
+    <div id="installBanner" class="install-banner hidden">
+      <span>📱 Add to Home Screen for app-like access</span>
+      <button id="installBtn" class="btn btn-sm">Install</button>
+      <button id="installDismiss" class="btn-icon" aria-label="Dismiss">
+        ✕
+      </button>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,44 @@
+{
+  "id": "xh_c6",
+  "name": "XH-C6",
+  "years": [
+    "2025",
+    "2024",
+    "2023",
+    "2022"
+  ],
+  "papers": [
+    {
+      "year": "2025",
+      "type": "paper",
+      "rel_path": "GATE_2027-2025_Question_Papers/QPs GATE 2007 to 2025/XH-C6/XH-C6/XH-C6-2025.pdf",
+      "size": 703444,
+      "mime": "application/pdf",
+      "part": 6
+    },
+    {
+      "year": "2024",
+      "type": "paper",
+      "rel_path": "GATE_2027-2025_Question_Papers/QPs GATE 2007 to 2025/XH-C6/XH-C6/XH_C6-2024.pdf",
+      "size": 734090,
+      "mime": "application/pdf",
+      "part": 6
+    },
+    {
+      "year": "2023",
+      "type": "paper",
+      "rel_path": "GATE_2027-2025_Question_Papers/QPs GATE 2007 to 2025/XH-C6/XH-C6/XH_C6-2023.pdf",
+      "size": 391545,
+      "mime": "application/pdf",
+      "part": 6
+    },
+    {
+      "year": "2022",
+      "type": "paper",
+      "rel_path": "GATE_2027-2025_Question_Papers/QPs GATE 2007 to 2025/XH-C6/XH-C6/XH_C6-2022.pdf",
+      "size": 390616,
+      "mime": "application/pdf",
+      "part": 6
+    }
+  ]
+}
