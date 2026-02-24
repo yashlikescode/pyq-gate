@@ -8,7 +8,11 @@
  *  - Service Worker registered for user-opened file caching
  */
 
-"use strict";
+import * as pdfjsLib from "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.2.67/pdf.min.mjs";
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+  "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.2.67/pdf.worker.min.mjs";
+
+let _currentRenderTask = null;
 
 // ── Cached subject metadata ───────────────────────────────────────
 const _subjectCache = new Map();
@@ -41,7 +45,8 @@ const els = {
   pdfOpenNew: $("pdfOpenNew"),
   pdfDownload: $("pdfDownload"),
   pdfLoading: $("pdfLoading"),
-  pdfFrame: $("pdfFrame"),
+  pdfPages: $("pdfPages"),
+  pdfContainer: $("pdfContainer"),
   installBanner: $("installBanner"),
   installBtn: $("installBtn"),
   installDismiss: $("installDismiss"),
@@ -64,9 +69,13 @@ function showView(viewId) {
 
 function goBack() {
   if (State.view === "viewPdf") {
-    // Stop loading the PDF
-    els.pdfFrame.src = "";
-    els.pdfFrame.classList.remove("loaded");
+    // Cancel any in-flight PDF render
+    if (_currentRenderTask) {
+      _currentRenderTask.cancelled = true;
+      _currentRenderTask = null;
+    }
+    els.pdfPages.innerHTML = "";
+    els.pdfLoading.style.display = "none";
     showView("viewPapers");
     setHeader(
       `${State.activeSubject.name} – ${State.activeYear}`,
@@ -324,24 +333,80 @@ function openPdf(paper, label) {
   els.pdfDownload.onclick = () =>
     downloadFile(encodedPath, paper.rel_path.split("/").pop());
 
-  els.pdfFrame.classList.remove("loaded");
-  els.pdfLoading.style.display = "flex";
-
   setHeader(label, `${State.activeSubject.name} ${State.activeYear}`);
   showView("viewPdf");
 
-  // onload fires for HTML pages but is unreliable for PDFs in some browsers.
-  // Use a fallback timeout so the spinner always clears.
-  let _loadHandled = false;
-  const _showPdf = () => {
-    if (_loadHandled) return;
-    _loadHandled = true;
+  // Reset viewer state
+  if (_currentRenderTask) {
+    _currentRenderTask.cancelled = true;
+  }
+  els.pdfPages.innerHTML = "";
+  els.pdfLoading.style.display = "flex";
+  $("pdfLoadingText").textContent = "Loading paper\u2026";
+  els.pdfContainer.scrollTop = 0;
+
+  const task = { cancelled: false };
+  _currentRenderTask = task;
+
+  renderPdf(encodedPath, task);
+}
+
+async function renderPdf(url, task) {
+  try {
+    const loadingTask = pdfjsLib.getDocument({
+      url,
+      cMapUrl: "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.2.67/cmaps/",
+      cMapPacked: true,
+    });
+    const pdf = await loadingTask.promise;
+    if (task.cancelled) return;
+
+    const totalPages = pdf.numPages;
+
+    // Render pages sequentially; show spinner until first page is painted
+    for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
+      if (task.cancelled) return;
+      $("pdfLoadingText").textContent =
+        `Rendering page ${pageNum} / ${totalPages}\u2026`;
+
+      const page = await pdf.getPage(pageNum);
+      if (task.cancelled) return;
+
+      // Scale so the page width exactly fills the container
+      const containerWidth = els.pdfContainer.clientWidth;
+      const viewport0 = page.getViewport({ scale: 1 });
+      const scale = containerWidth / viewport0.width;
+      const viewport = page.getViewport({ scale });
+
+      const canvas = document.createElement("canvas");
+      canvas.className = "pdf-page";
+      // Use device pixel ratio for crisp rendering on hi-DPI screens
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = Math.floor(viewport.width * dpr);
+      canvas.height = Math.floor(viewport.height * dpr);
+      canvas.style.width = `${Math.floor(viewport.width)}px`;
+      canvas.style.height = `${Math.floor(viewport.height)}px`;
+
+      els.pdfPages.appendChild(canvas);
+
+      const ctx = canvas.getContext("2d");
+      ctx.scale(dpr, dpr);
+      await page.render({ canvasContext: ctx, viewport }).promise;
+
+      // Hide spinner after first page is painted
+      if (pageNum === 1) {
+        els.pdfLoading.style.display = "none";
+      }
+    }
+  } catch (err) {
+    if (task.cancelled) return;
     els.pdfLoading.style.display = "none";
-    els.pdfFrame.classList.add("loaded");
-  };
-  els.pdfFrame.onload = _showPdf;
-  setTimeout(_showPdf, 2500); // fallback: reveal iframe after 2.5 s
-  els.pdfFrame.src = encodedPath;
+    els.pdfPages.innerHTML = `<div class="empty-state">
+      <div class="icon">⚠️</div>
+      <h3>Could not load PDF</h3>
+      <p>${escapeHtml(err.message)}</p>
+    </div>`;
+  }
 }
 
 function downloadFile(url, filename) {

@@ -481,6 +481,8 @@ body {
   flex: 1;
   position: relative;
   background: #525659;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 .pdf-loading {
   position: absolute;
@@ -507,14 +509,19 @@ body {
   }
 }
 
-#pdfFrame {
-  width: 100%;
-  height: 100%;
-  border: none;
-  display: none;
+.pdf-pages {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0 24px;
 }
-#pdfFrame.loaded {
+
+.pdf-page {
   display: block;
+  /* width set in JS to match container */
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+  background: #fff;
 }
 
 /* ── Empty / Error states ──────────────────────────────────────── */

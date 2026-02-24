@@ -142,14 +142,9 @@
         <div id="pdfContainer" class="pdf-container">
           <div id="pdfLoading" class="pdf-loading">
             <div class="spinner"></div>
-            <span>Loading paper…</span>
+            <span id="pdfLoadingText">Loading paper…</span>
           </div>
-          <iframe
-            id="pdfFrame"
-            title="Paper viewer"
-            allow="fullscreen"
-            loading="lazy"
-          ></iframe>
+          <div id="pdfPages" class="pdf-pages"></div>
         </div>
       </section>
     </main>
@@ -163,6 +158,6 @@
       </button>
     </div>
 
-    <script src="app.js"></script>
+    <script type="module" src="app.js"></script>
   </body>
 </html>
