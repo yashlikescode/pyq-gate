@@ -42,8 +42,6 @@ const els = {
   yearList: $("yearList"),
   paperList: $("paperList"),
   pdfTitle: $("pdfTitle"),
-  pdfOpenNew: $("pdfOpenNew"),
-  pdfDownload: $("pdfDownload"),
   pdfLoading: $("pdfLoading"),
   pdfPages: $("pdfPages"),
   pdfContainer: $("pdfContainer"),
@@ -329,9 +327,6 @@ function renderPaperList(papers) {
 function openPdf(paper, label) {
   const encodedPath = encodeRelPath(paper.rel_path);
   els.pdfTitle.textContent = label;
-  els.pdfOpenNew.href = encodedPath;
-  els.pdfDownload.onclick = () =>
-    downloadFile(encodedPath, paper.rel_path.split("/").pop());
 
   setHeader(label, `${State.activeSubject.name} ${State.activeYear}`);
   showView("viewPdf");
