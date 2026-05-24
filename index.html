@@ -100,7 +100,10 @@
       <!-- ── PDF Viewer ── -->
       <section id="viewPdf" class="view viewer-view">
         <div id="pdfToolbar" class="pdf-toolbar">
-          <span id="pdfTitle" class="pdf-title"></span>
+          <div class="pdf-title-wrap">
+            <span id="pdfTitle" class="pdf-title"></span>
+          </div>
+          <div id="pdfViewTabs" class="pdf-tabs hidden" aria-label="PDF view selector"></div>
         </div>
         <div id="pdfContainer" class="pdf-container">
           <div id="pdfLoading" class="pdf-loading">
@@ -111,15 +114,6 @@
         </div>
       </section>
     </main>
-
-    <!-- ── Bottom install hint (shown once) ── -->
-    <div id="installBanner" class="install-banner hidden">
-      <span>📱 Add to Home Screen for app-like access</span>
-      <button id="installBtn" class="btn btn-sm">Install</button>
-      <button id="installDismiss" class="btn-icon" aria-label="Dismiss">
-        ✕
-      </button>
-    </div>
 
     <script type="module" src="app.js"></script>
   </body>

@@ -24,6 +24,9 @@ const State = {
   activeSubject: null, // { id, name, fullName, years, paperCount, meta }
   activeYear: null, // string '2024'
   activePapers: [], // papers for active year
+  selectedPaper: null,
+  answerKeyPath: null,
+  pdfMode: "paper", // 'paper' | 'key'
 };
 
 // ── DOM refs ──────────────────────────────────────────────────────
@@ -42,6 +45,7 @@ const els = {
   yearList: $("yearList"),
   paperList: $("paperList"),
   pdfTitle: $("pdfTitle"),
+  pdfViewTabs: $("pdfViewTabs"),
   pdfLoading: $("pdfLoading"),
   pdfPages: $("pdfPages"),
   pdfContainer: $("pdfContainer"),
@@ -139,6 +143,152 @@ function paperLabel(paper, subjectName) {
   return paper.type === "key"
     ? `${subjectName} ${paper.year}${part} Answer Key`
     : `${subjectName} ${paper.year}${part} Question Paper`;
+}
+
+function getAnswerKeyPathForPaper(paper) {
+  const subject = State.activeSubject;
+  if (!subject) return null;
+
+  const year = Number(paper.year);
+  const part = Number(paper.part) || 1;
+  const subjectId = subject.id;
+  const subjectCode = subject.name.replace(/-/g, "").toUpperCase();
+
+  if (year < 2021 || year > 2025) return null;
+
+  if (year === 2025) {
+    if (subjectId === "ce") {
+      return `Answer_Keys/2025_Keys/${part === 1 ? "CE1" : "CE2"}_Keys.pdf`;
+    }
+    if (subjectId === "cs") {
+      return `Answer_Keys/2025_Keys/${part === 1 ? "CS1" : "CS2"}_Keys.pdf`;
+    }
+    if (subjectId === "gg") {
+      return `Answer_Keys/2025_Keys/${part === 1 ? "GG1" : "GG2"}_Keys.pdf`;
+    }
+    if (subjectId.startsWith("xh_")) {
+      return `Answer_Keys/2025_Keys/${subjectCode}_Keys.pdf`;
+    }
+    return `Answer_Keys/2025_Keys/${subjectCode}_Keys.pdf`;
+  }
+
+  if (year === 2024) {
+    if (subjectId === "ce") {
+      return `Answer_Keys/2024_Keys/${part === 1 ? "CE1" : "CE2"}FinalAnswerKey.pdf`;
+    }
+    if (subjectId === "cs") {
+      return `Answer_Keys/2024_Keys/${part === 1 ? "CS1" : "CS2"}FinalAnswerKey.pdf`;
+    }
+    if (subjectId === "gg") {
+      return `Answer_Keys/2024_Keys/${part === 1 ? "GG1" : "GG2"}FinalAnswerKey.pdf`;
+    }
+    if (subjectId.startsWith("xh_")) {
+      return `Answer_Keys/2024_Keys/${subject.name}FinalAnswerKey.pdf`;
+    }
+    return `Answer_Keys/2024_Keys/${subjectCode}FinalAnswerKey.pdf`;
+  }
+
+  if (year === 2023) {
+    if (subjectId === "ce") {
+      return `Answer_Keys/2023_Keys/${part === 1 ? "CE1" : "CE2"}_ANS_GATE2023.pdf`;
+    }
+    if (subjectId === "cs") {
+      return "Answer_Keys/2023_Keys/CS_ANS_GATE2023.pdf";
+    }
+    if (subjectId === "gg") {
+      return `Answer_Keys/2023_Keys/${part === 1 ? "GG_G1" : "GG_G2"}_ANS_GATE2023.pdf`;
+    }
+    if (subjectId.startsWith("xh_")) {
+      return "Answer_Keys/2023_Keys/XH_ANS_GATE2023.pdf";
+    }
+    return `Answer_Keys/2023_Keys/${subjectCode}_ANS_GATE2023.pdf`;
+  }
+
+  if (year === 2022) {
+    if (subjectId === "gg") {
+      return "Answer_Keys/2022_Keys/gg-merged_2022.pdf";
+    }
+    if (subjectId === "me") {
+      return "Answer_Keys/2022_Keys/me-merged_2022.pdf";
+    }
+    if (subjectId.startsWith("xh_")) {
+      return "Answer_Keys/2022_Keys/xh_2022.pdf";
+    }
+    return `Answer_Keys/2022_Keys/${subjectId}_${year}.pdf`;
+  }
+
+  if (subjectId === "ce") {
+    return "Answer_Keys/2021_Keys/ce_merged_2021.pdf";
+  }
+  if (subjectId === "cs") {
+    return "Answer_Keys/2021_Keys/cs_merged_2021.pdf";
+  }
+  if (subjectId === "me") {
+    return "Answer_Keys/2021_Keys/me_merged_2021.pdf";
+  }
+  if (subjectId === "xe") {
+    return "Answer_Keys/2021_Keys/xe_2021_merged.pdf";
+  }
+  if (subjectId === "xl") {
+    return "Answer_Keys/2021_Keys/xl-2021_merged.pdf";
+  }
+  if (subjectId.startsWith("xh_")) {
+    return "Answer_Keys/2021_Keys/xh-2021_merged.pdf";
+  }
+
+  return `Answer_Keys/2021_Keys/${subjectId}_${year}.pdf`;
+}
+
+function renderPdfTabs() {
+  const hasKey = Boolean(State.answerKeyPath);
+  els.pdfViewTabs.classList.toggle("hidden", !hasKey);
+  els.pdfViewTabs.innerHTML = "";
+
+  if (!hasKey) {
+    return;
+  }
+
+  ["paper", "key"].forEach((mode) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = `pdf-tab ${State.pdfMode === mode ? "active" : ""}`;
+    button.dataset.view = mode;
+    button.textContent = mode === "paper" ? "Question Paper" : "Answer Key";
+    button.setAttribute("aria-pressed", String(State.pdfMode === mode));
+    button.addEventListener("click", () => switchPdfView(mode));
+    els.pdfViewTabs.appendChild(button);
+  });
+}
+
+function switchPdfView(mode) {
+  if (!State.answerKeyPath && mode === "key") {
+    return;
+  }
+
+  State.pdfMode = mode;
+  renderPdfTabs();
+  renderCurrentPdf();
+}
+
+function renderCurrentPdf() {
+  if (_currentRenderTask) {
+    _currentRenderTask.cancelled = true;
+  }
+
+  const task = { cancelled: false };
+  _currentRenderTask = task;
+
+  els.pdfPages.innerHTML = "";
+  els.pdfLoading.style.display = "flex";
+  $("pdfLoadingText").textContent =
+    State.pdfMode === "key" ? "Loading answer key…" : "Loading paper…";
+
+  const url =
+    State.pdfMode === "key"
+      ? encodeRelPath(State.answerKeyPath)
+      : encodeRelPath(State.selectedPaper.rel_path);
+
+  renderPdf(url, task, State.pdfMode === "key" ? "Loading answer key…" : "Loading paper…");
 }
 
 // ── Home: Load Subjects ───────────────────────────────────────────
@@ -325,25 +475,16 @@ function renderPaperList(papers) {
 
 // ── PDF Viewer ────────────────────────────────────────────────────
 function openPdf(paper, label) {
-  const encodedPath = encodeRelPath(paper.rel_path);
+  State.selectedPaper = paper;
+  State.answerKeyPath = getAnswerKeyPathForPaper(paper);
+  State.pdfMode = "paper";
   els.pdfTitle.textContent = label;
 
   setHeader(label, `${State.activeSubject.name} ${State.activeYear}`);
   showView("viewPdf");
-
-  // Reset viewer state
-  if (_currentRenderTask) {
-    _currentRenderTask.cancelled = true;
-  }
-  els.pdfPages.innerHTML = "";
-  els.pdfLoading.style.display = "flex";
-  $("pdfLoadingText").textContent = "Loading paper\u2026";
   els.pdfContainer.scrollTop = 0;
-
-  const task = { cancelled: false };
-  _currentRenderTask = task;
-
-  renderPdf(encodedPath, task);
+  renderPdfTabs();
+  renderCurrentPdf();
 }
 
 async function renderPdf(url, task) {

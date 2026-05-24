@@ -460,21 +460,57 @@ body {
 .pdf-toolbar {
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: space-between;
+  gap: 12px;
   padding: 10px 16px;
   background: var(--card-bg);
   border-bottom: 1px solid var(--border);
   flex-shrink: 0;
   min-height: 52px;
 }
-.pdf-title {
+.pdf-title-wrap {
   flex: 1;
+  min-width: 0;
+}
+.pdf-title {
+  display: block;
   font-size: 0.85rem;
   font-weight: 600;
   color: var(--text);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+.pdf-tabs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.pdf-tab {
+  border: 0;
+  border-radius: 999px;
+  padding: 8px 12px;
+  background: #eef1f8;
+  color: var(--text);
+  font: inherit;
+  font-size: 0.76rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    color 0.15s,
+    box-shadow 0.15s,
+    transform 0.1s;
+}
+.pdf-tab.active {
+  background: var(--primary);
+  color: #fff;
+  box-shadow: 0 6px 14px rgba(26, 35, 126, 0.18);
+}
+.pdf-tab:active {
+  transform: scale(0.98);
 }
 
 .pdf-container {
