@@ -8,9 +8,18 @@
  *  - Service Worker registered for user-opened file caching
  */
 
-import * as pdfjsLib from "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.2.67/pdf.min.mjs";
-pdfjsLib.GlobalWorkerOptions.workerSrc =
-  "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.2.67/pdf.worker.min.mjs";
+let _pdfjsLibPromise = null;
+async function getPdfJsLib() {
+  if (_pdfjsLibPromise) return _pdfjsLibPromise;
+  _pdfjsLibPromise = import(
+    "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.2.67/pdf.min.mjs"
+  ).then((mod) => {
+    mod.GlobalWorkerOptions.workerSrc =
+      "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.2.67/pdf.worker.min.mjs";
+    return mod;
+  });
+  return _pdfjsLibPromise;
+}
 
 let _currentRenderTask = null;
 
@@ -587,6 +596,8 @@ function openPdf(paper, label) {
 
 async function renderPdf(url, task) {
   try {
+    const pdfjsLib = await getPdfJsLib();
+    if (task.cancelled) return;
     const loadingTask = pdfjsLib.getDocument({
       url,
       cMapUrl: "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.2.67/cmaps/",
@@ -679,8 +690,15 @@ const _origShowView = showView;
 
 // ── PWA Install ───────────────────────────────────────────────────
 let _deferredInstallPrompt = null;
+const hasInstallUi =
+  Boolean(els.installBanner) &&
+  Boolean(els.installBtn) &&
+  Boolean(els.installDismiss);
 
 window.addEventListener("beforeinstallprompt", (e) => {
+  if (!hasInstallUi) {
+    return;
+  }
   e.preventDefault();
   _deferredInstallPrompt = e;
   // Show banner only if not dismissed before
@@ -689,23 +707,31 @@ window.addEventListener("beforeinstallprompt", (e) => {
   }
 });
 
-els.installBtn.addEventListener("click", async () => {
-  if (!_deferredInstallPrompt) return;
-  _deferredInstallPrompt.prompt();
-  const { outcome } = await _deferredInstallPrompt.userChoice;
-  if (outcome === "accepted") {
-    els.installBanner.classList.add("hidden");
-  }
-  _deferredInstallPrompt = null;
-});
+if (els.installBtn) {
+  els.installBtn.addEventListener("click", async () => {
+    if (!_deferredInstallPrompt) return;
+    _deferredInstallPrompt.prompt();
+    const { outcome } = await _deferredInstallPrompt.userChoice;
+    if (outcome === "accepted" && els.installBanner) {
+      els.installBanner.classList.add("hidden");
+    }
+    _deferredInstallPrompt = null;
+  });
+}
 
-els.installDismiss.addEventListener("click", () => {
-  els.installBanner.classList.add("hidden");
-  localStorage.setItem("installDismissed", "1");
-});
+if (els.installDismiss) {
+  els.installDismiss.addEventListener("click", () => {
+    if (els.installBanner) {
+      els.installBanner.classList.add("hidden");
+    }
+    localStorage.setItem("installDismissed", "1");
+  });
+}
 
 window.addEventListener("appinstalled", () => {
-  els.installBanner.classList.add("hidden");
+  if (els.installBanner) {
+    els.installBanner.classList.add("hidden");
+  }
 });
 
 // ── Disable App-level Caching ─────────────────────────────────────
