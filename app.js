@@ -139,7 +139,8 @@ function encodeRelPath(relPath) {
 
 /** Build a display label for a paper file */
 function paperLabel(paper, subjectName) {
-  const part = paper.part ? ` – Set ${paper.part}` : "";
+  const inferredPart = inferPartFromPaper(paper, State.activeSubject);
+  const part = inferredPart ? ` - Set ${inferredPart}` : "";
   return paper.type === "key"
     ? `${subjectName} ${paper.year}${part} Answer Key`
     : `${subjectName} ${paper.year}${part} Question Paper`;
@@ -150,26 +151,44 @@ function getAnswerKeyPathForPaper(paper) {
   if (!subject) return null;
 
   const year = Number(paper.year);
-  const part = Number(paper.part) || 1;
+  const part = inferPartFromPaper(paper, subject);
   const subjectId = subject.id;
   const subjectCode = subject.name.replace(/-/g, "").toUpperCase();
+  console.log("[getAnswerKeyPathForPaper] input", {
+    subjectId,
+    subjectCode,
+    year,
+    explicitPart: paper.part,
+    inferredPart: part,
+    relPath: paper.rel_path,
+  });
 
   if (year < 2021 || year > 2025) return null;
 
   if (year === 2025) {
     if (subjectId === "ce") {
-      return `Answer_Keys/2025_Keys/${part === 1 ? "CE1" : "CE2"}_Keys.pdf`;
+      const path = `Answer_Keys/2025_Keys/${part === 1 ? "CE1" : "CE2"}_Keys.pdf`;
+      console.log("[getAnswerKeyPathForPaper] resolved", { path });
+      return path;
     }
     if (subjectId === "cs") {
-      return `Answer_Keys/2025_Keys/${part === 1 ? "CS1" : "CS2"}_Keys.pdf`;
+      const path = `Answer_Keys/2025_Keys/${part === 1 ? "CS1" : "CS2"}_Keys.pdf`;
+      console.log("[getAnswerKeyPathForPaper] resolved", { path });
+      return path;
     }
     if (subjectId === "gg") {
-      return `Answer_Keys/2025_Keys/${part === 1 ? "GG1" : "GG2"}_Keys.pdf`;
+      const path = `Answer_Keys/2025_Keys/${part === 1 ? "GG1" : "GG2"}_Keys.pdf`;
+      console.log("[getAnswerKeyPathForPaper] resolved", { path });
+      return path;
     }
     if (subjectId.startsWith("xh_")) {
-      return `Answer_Keys/2025_Keys/${subjectCode}_Keys.pdf`;
+      const path = `Answer_Keys/2025_Keys/${subjectCode}_Keys.pdf`;
+      console.log("[getAnswerKeyPathForPaper] resolved", { path });
+      return path;
     }
-    return `Answer_Keys/2025_Keys/${subjectCode}_Keys.pdf`;
+    const path = `Answer_Keys/2025_Keys/${subjectCode}_Keys.pdf`;
+    console.log("[getAnswerKeyPathForPaper] resolved", { path });
+    return path;
   }
 
   if (year === 2024) {
@@ -236,11 +255,65 @@ function getAnswerKeyPathForPaper(paper) {
     return "Answer_Keys/2021_Keys/xh-2021_merged.pdf";
   }
 
-  return `Answer_Keys/2021_Keys/${subjectId}_${year}.pdf`;
+  const path = `Answer_Keys/2021_Keys/${subjectId}_${year}.pdf`;
+  console.log("[getAnswerKeyPathForPaper] resolved", { path });
+  return path;
+}
+
+function inferPartFromPaper(paper, subject) {
+  const explicitPart = Number(paper?.part);
+  if (Number.isFinite(explicitPart) && explicitPart > 0) {
+    console.log("[inferPartFromPaper] using explicit part", {
+      subjectId: subject?.id,
+      part: explicitPart,
+      relPath: paper?.rel_path,
+    });
+    return explicitPart;
+  }
+
+  const relPath = paper?.rel_path || "";
+  const filename = relPath.split("/").pop() || "";
+  const upperName = filename.toUpperCase();
+
+  if (subject?.id === "cs") {
+    if (/^CS1(?:-|\d{4})/.test(upperName)) {
+      console.log("[inferPartFromPaper] inferred CS part", {
+        filename,
+        part: 1,
+      });
+      return 1;
+    }
+    if (/^CS2(?:-|\d{4})/.test(upperName)) {
+      console.log("[inferPartFromPaper] inferred CS part", {
+        filename,
+        part: 2,
+      });
+      return 2;
+    }
+  }
+  if (subject?.id === "ce") {
+    if (/^CE1(?:-|\d{4})/.test(upperName)) return 1;
+    if (/^CE2(?:-|\d{4})/.test(upperName)) return 2;
+  }
+  if (subject?.id === "gg") {
+    if (/^GG[-_]?1(?:-|_?\d{4})/.test(upperName)) return 1;
+    if (/^GG[-_]?2(?:-|_?\d{4})/.test(upperName)) return 2;
+  }
+
+  console.log("[inferPartFromPaper] defaulting to part 1", {
+    subjectId: subject?.id,
+    filename,
+  });
+  return 1;
 }
 
 function renderPdfTabs() {
   const hasKey = Boolean(State.answerKeyPath);
+  console.log("[renderPdfTabs]", {
+    hasKey,
+    pdfMode: State.pdfMode,
+    answerKeyPath: State.answerKeyPath,
+  });
   els.pdfViewTabs.classList.toggle("hidden", !hasKey);
   els.pdfViewTabs.innerHTML = "";
 
@@ -261,7 +334,13 @@ function renderPdfTabs() {
 }
 
 function switchPdfView(mode) {
+  console.log("[switchPdfView] request", {
+    currentMode: State.pdfMode,
+    requestedMode: mode,
+    hasAnswerKey: Boolean(State.answerKeyPath),
+  });
   if (!State.answerKeyPath && mode === "key") {
+    console.log("[switchPdfView] blocked: no answer key path");
     return;
   }
 
@@ -287,8 +366,18 @@ function renderCurrentPdf() {
     State.pdfMode === "key"
       ? encodeRelPath(State.answerKeyPath)
       : encodeRelPath(State.selectedPaper.rel_path);
+  console.log("[renderCurrentPdf]", {
+    mode: State.pdfMode,
+    url,
+    selectedPaper: State.selectedPaper?.rel_path,
+    answerKeyPath: State.answerKeyPath,
+  });
 
-  renderPdf(url, task, State.pdfMode === "key" ? "Loading answer key…" : "Loading paper…");
+  renderPdf(
+    url,
+    task,
+    State.pdfMode === "key" ? "Loading answer key…" : "Loading paper…",
+  );
 }
 
 // ── Home: Load Subjects ───────────────────────────────────────────
@@ -450,7 +539,9 @@ function renderPaperList(papers) {
   // Sort: QPs first, then keys; within each: by part asc
   const sorted = [...papers].sort((a, b) => {
     if (a.type !== b.type) return a.type === "paper" ? -1 : 1;
-    return (a.part || 0) - (b.part || 0);
+    return (
+      inferPartFromPaper(a, subject) - inferPartFromPaper(b, subject)
+    );
   });
 
   els.paperList.innerHTML = "";
@@ -478,6 +569,13 @@ function openPdf(paper, label) {
   State.selectedPaper = paper;
   State.answerKeyPath = getAnswerKeyPathForPaper(paper);
   State.pdfMode = "paper";
+  console.log("[openPdf]", {
+    label,
+    paperPath: paper.rel_path,
+    explicitPart: paper.part,
+    inferredPart: inferPartFromPaper(paper, State.activeSubject),
+    answerKeyPath: State.answerKeyPath,
+  });
   els.pdfTitle.textContent = label;
 
   setHeader(label, `${State.activeSubject.name} ${State.activeYear}`);
@@ -610,12 +708,20 @@ window.addEventListener("appinstalled", () => {
   els.installBanner.classList.add("hidden");
 });
 
-// ── Service Worker ────────────────────────────────────────────────
+// ── Disable App-level Caching ─────────────────────────────────────
 if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("sw.js").catch(() => {
-      // SW registration failure is non-fatal
-    });
+  window.addEventListener("load", async () => {
+    try {
+      const regs = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(regs.map((reg) => reg.unregister()));
+      if (window.caches?.keys) {
+        const keys = await caches.keys();
+        await Promise.all(keys.map((key) => caches.delete(key)));
+      }
+      console.log("[cache-control] service workers unregistered and caches cleared");
+    } catch (err) {
+      console.warn("[cache-control] failed to fully clear cache state", err);
+    }
   });
 }
 
